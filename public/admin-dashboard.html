@@ -1,0 +1,1400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Admin Dashboard — AFP OVAI</title>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background: #f5f7fa;
+      display: flex;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      width: 260px;
+      background: linear-gradient(180deg, #0a3dff, #0096ff);
+      color: white;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+    }
+
+    .sidebar-header {
+      padding: 24px 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border-bottom: 1px solid rgba(255,255,255,0.2);
+    }
+
+    .logo {
+      width: 40px;
+      height: 40px;
+      background: white;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      color: #0a3dff;
+      font-size: 16px;
+    }
+
+    .sidebar-header h2 {
+      font-size: 20px;
+      font-weight: bold;
+    }
+
+    .sidebar-nav {
+      flex: 1;
+      padding: 20px 0;
+    }
+
+    .nav-item {
+      padding: 14px 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+      transition: 0.2s;
+      color: white;
+      text-decoration: none;
+      border-left: 4px solid transparent;
+    }
+
+    .nav-item:hover {
+      background: rgba(255,255,255,0.1);
+      border-left-color: white;
+    }
+
+    .nav-item.active {
+      background: rgba(255,255,255,0.2);
+      border-left-color: white;
+      font-weight: bold;
+    }
+
+    .nav-icon {
+      font-size: 20px;
+      width: 24px;
+      text-align: center;
+    }
+
+    /* Main Content */
+    .main-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    /* Top Bar */
+    .top-bar {
+      background: white;
+      padding: 16px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+
+    .top-bar-left h1 {
+      font-size: 24px;
+      color: #1b1b1b;
+    }
+
+    .top-bar-right {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .notification-bell {
+      position: relative;
+      cursor: pointer;
+      font-size: 24px;
+      color: transparent;
+      transition: 0.2s;
+      text-shadow: 0 0 0 #666;
+    }
+
+    .notification-bell:hover {
+      text-shadow: 0 0 0 #0a73ff;
+    }
+
+    .notification-badge {
+      position: absolute;
+      top: -4px;
+      right: -4px;
+      background: #ff4444;
+      color: white;
+      border-radius: 50%;
+      min-width: 18px;
+      height: 18px;
+      padding: 0 4px;
+      font-size: 11px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+    }
+
+    .notification-badge.hidden {
+      display: none;
+    }
+
+    .profile-section {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+      padding: 8px 12px;
+      border-radius: 8px;
+      transition: 0.2s;
+      position: relative;
+    }
+
+    .profile-section:hover {
+      background: #f5f7fa;
+    }
+
+    .profile-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #0a3dff, #0096ff);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 16px;
+    }
+
+    .profile-info {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .profile-name {
+      font-weight: bold;
+      color: #1b1b1b;
+      font-size: 14px;
+    }
+
+    .profile-role {
+      font-size: 12px;
+      color: #666;
+    }
+
+    .profile-dropdown {
+      position: absolute;
+      top: 60px;
+      right: 30px;
+      width: 200px;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+      display: none;
+      flex-direction: column;
+      z-index: 100;
+      overflow: hidden;
+    }
+
+    .profile-dropdown.active {
+      display: flex;
+    }
+
+    .profile-dropdown-item {
+      padding: 14px 20px;
+      cursor: pointer;
+      transition: 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: #1b1b1b;
+      font-size: 14px;
+    }
+
+    .profile-dropdown-item:hover {
+      background: #f5f7fa;
+    }
+
+    .profile-dropdown-item.logout {
+      color: #dc3545;
+      border-top: 1px solid #e0e0e0;
+    }
+
+    /* Content Area */
+    .content-area {
+      flex: 1;
+      overflow-y: auto;
+      padding: 30px;
+    }
+
+    .page-section {
+      display: none;
+    }
+
+    .page-section.active {
+      display: block;
+    }
+
+    .card {
+      background: white;
+      border-radius: 12px;
+      padding: 24px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      margin-bottom: 20px;
+    }
+
+    .card h3 {
+      font-size: 20px;
+      color: #1b1b1b;
+      margin-bottom: 16px;
+    }
+
+    .btn {
+      padding: 12px 24px;
+      border: none;
+      background: #0a73ff;
+      color: white;
+      font-size: 14px;
+      font-weight: bold;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: 0.25s;
+    }
+
+    .btn:hover {
+      background: #084ed1;
+    }
+
+    .btn-sm {
+      padding: 8px 16px;
+      font-size: 13px;
+    }
+
+    .btn-success {
+      background: #28a745;
+    }
+
+    .btn-success:hover {
+      background: #218838;
+    }
+
+    .btn-danger {
+      background: #dc3545;
+    }
+
+    .btn-danger:hover {
+      background: #c82333;
+    }
+
+    .btn-warning {
+      background: #ffc107;
+      color: #1b1b1b;
+    }
+
+    .btn-warning:hover {
+      background: #e0a800;
+    }
+
+    /* Stats Grid */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+
+    .stat-card {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 24px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+    }
+
+    .stat-card.green {
+      background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+    }
+
+    .stat-card.orange {
+      background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    }
+
+    .stat-card.blue {
+      background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    }
+
+    .stat-icon {
+      font-size: 36px;
+      margin-bottom: 12px;
+    }
+
+    .stat-value {
+      font-size: 32px;
+      font-weight: bold;
+      margin-bottom: 4px;
+    }
+
+    .stat-label {
+      font-size: 14px;
+      opacity: 0.9;
+    }
+
+    /* Table */
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .data-table th {
+      background: #f8f9fa;
+      padding: 12px;
+      text-align: left;
+      font-weight: bold;
+      color: #1b1b1b;
+      border-bottom: 2px solid #e0e0e0;
+    }
+
+    .data-table td {
+      padding: 12px;
+      border-bottom: 1px solid #f0f0f0;
+      color: #666;
+    }
+
+    .data-table tr:hover {
+      background: #f8f9fa;
+    }
+
+    .status-badge {
+      padding: 4px 12px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: bold;
+    }
+
+    .status-pending {
+      background: #fff3cd;
+      color: #856404;
+    }
+
+    .status-approved {
+      background: #d4edda;
+      color: #155724;
+    }
+
+    .status-rejected {
+      background: #f8d7da;
+      color: #721c24;
+    }
+
+    .status-processing {
+      background: #cfe2ff;
+      color: #084298;
+    }
+
+    .action-buttons {
+      display: flex;
+      gap: 8px;
+    }
+
+    /* Modal */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.5);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal.active {
+      display: flex;
+    }
+
+    .modal-content {
+      background: white;
+      border-radius: 12px;
+      padding: 30px;
+      max-width: 500px;
+      width: 90%;
+      max-height: 80vh;
+      overflow-y: auto;
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .modal-header h3 {
+      font-size: 20px;
+      color: #1b1b1b;
+    }
+
+    .close-btn {
+      background: none;
+      border: none;
+      font-size: 24px;
+      cursor: pointer;
+      color: #666;
+    }
+
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: bold;
+      color: #1b1b1b;
+      font-size: 14px;
+    }
+
+    .form-group input,
+    .form-group textarea,
+    .form-group select {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #d0d7de;
+      border-radius: 6px;
+      font-size: 14px;
+    }
+
+    .form-group textarea {
+      resize: vertical;
+      min-height: 100px;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: #999;
+    }
+
+    .empty-state-icon {
+      font-size: 64px;
+      margin-bottom: 16px;
+    }
+
+    .radio-group {
+      display: flex;
+      gap: 20px;
+      margin-top: 8px;
+    }
+
+    .radio-option {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .radio-option input[type="radio"] {
+      width: auto;
+      margin: 0;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <div class="sidebar-header">
+      <div class="logo">AFP</div>
+      <h2>AFPOVAI Admin</h2>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-item active" data-page="home">
+        <span class="nav-icon">🏠</span>
+        <span>Dashboard</span>
+      </div>
+      <div class="nav-item" data-page="appointments">
+        <span class="nav-icon">📅</span>
+        <span>Appointments</span>
+      </div>
+      <div class="nav-item" data-page="documents">
+        <span class="nav-icon">📄</span>
+        <span>Document Requests</span>
+      </div>
+      <div class="nav-item" data-page="residents">
+        <span class="nav-icon">👥</span>
+        <span>Manage Residents</span>
+      </div>
+    </nav>
+  </div>
+
+  <!-- Main Content -->
+  <div class="main-content">
+    <!-- Top Bar -->
+    <div class="top-bar">
+      <div class="top-bar-left">
+        <h1 id="pageTitle">Dashboard</h1>
+      </div>
+      <div class="top-bar-right">
+        <div class="notification-bell" id="notificationBell">
+          🔔
+          <span class="notification-badge hidden" id="notificationBadge">0</span>
+        </div>
+        <div class="profile-section" id="profileSection">
+          <div class="profile-avatar" id="profileAvatar">AD</div>
+          <div class="profile-info">
+            <div class="profile-name" id="profileName">Admin</div>
+            <div class="profile-role">Administrator</div>
+          </div>
+        </div>
+        <div class="profile-dropdown" id="profileDropdown">
+          <div class="profile-dropdown-item" id="viewProfile">
+            <span>👤</span>
+            <span>View Profile</span>
+          </div>
+          <div class="profile-dropdown-item logout" id="logoutBtn">
+            <span>🚪</span>
+            <span>Log Out</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Content Area -->
+    <div class="content-area">
+      <!-- Home Section -->
+      <div class="page-section active" id="homeSection">
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-icon">👥</div>
+            <div class="stat-value" id="totalResidents">0</div>
+            <div class="stat-label">Total Registered Residents</div>
+          </div>
+          <div class="stat-card green">
+            <div class="stat-icon">📅</div>
+            <div class="stat-value" id="pendingAppointments">0</div>
+            <div class="stat-label">Pending Appointments</div>
+          </div>
+          <div class="stat-card orange">
+            <div class="stat-icon">📄</div>
+            <div class="stat-value" id="pendingDocuments">0</div>
+            <div class="stat-label">Pending Document Requests</div>
+          </div>
+          <div class="stat-card blue">
+            <div class="stat-icon">✅</div>
+            <div class="stat-value" id="approvedToday">0</div>
+            <div class="stat-label">Approved Today</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>Quick Actions</h3>
+          <div style="display: flex; gap: 12px;">
+            <button class="btn" id="registerResidentBtn">+ Register New Resident</button>
+            <button class="btn btn-success" id="viewAppointmentsBtn">View Appointments</button>
+            <button class="btn btn-warning" id="viewDocumentsBtn">View Documents</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Appointments Section -->
+      <div class="page-section" id="appointmentsSection">
+        <div class="card">
+          <h3>Appointment Requests</h3>
+          <div style="overflow-x: auto;">
+            <table class="data-table" id="appointmentsTable">
+              <thead>
+                <tr>
+                  <th>Resident Name</th>
+                  <th>Purpose</th>
+                  <th>Requested Date</th>
+                  <th>Time</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="appointmentsTableBody">
+                <tr>
+                  <td colspan="6" style="text-align: center; padding: 40px; color: #999;">
+                    No appointment requests
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Documents Section -->
+      <div class="page-section" id="documentsSection">
+        <div class="card">
+          <h3>Document Requests</h3>
+          <div style="overflow-x: auto;">
+            <table class="data-table" id="documentsTable">
+              <thead>
+                <tr>
+                  <th>Resident Name</th>
+                  <th>Document Type</th>
+                  <th>Purpose</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="documentsTableBody">
+                <tr>
+                  <td colspan="5" style="text-align: center; padding: 40px; color: #999;">
+                    No document requests
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Residents Section -->
+      <div class="page-section" id="residentsSection">
+        <div class="card">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <h3>Registered Residents</h3>
+            <button class="btn" id="addResidentBtn">+ Register Resident</button>
+          </div>
+          <div style="overflow-x: auto;">
+            <table class="data-table" id="residentsTable">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Email</th>
+                  <th>Address</th>
+                  <th>Phone</th>
+                  <th>Registered Date</th>
+                </tr>
+              </thead>
+              <tbody id="residentsTableBody">
+                <tr>
+                  <td colspan="5" style="text-align: center; padding: 40px; color: #999;">
+                    No residents registered
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Edit Appointment Modal -->
+  <div class="modal" id="editAppointmentModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Edit Appointment</h3>
+        <button class="close-btn" id="closeEditAppointmentModal">×</button>
+      </div>
+      <form id="editAppointmentForm">
+        <input type="hidden" id="editAppointmentId" />
+        <input type="hidden" id="editAppointmentUserId" />
+        <div class="form-group">
+          <label>Purpose</label>
+          <input type="text" id="editAppointmentPurpose" required />
+        </div>
+        <div class="form-group">
+          <label>Date</label>
+          <input type="date" id="editAppointmentDate" required />
+        </div>
+        <div class="form-group">
+          <label>Time</label>
+          <input type="time" id="editAppointmentTime" required />
+        </div>
+        <div class="form-group">
+          <label>Notes</label>
+          <textarea id="editAppointmentNotes"></textarea>
+        </div>
+        <div class="form-group">
+          <label>Status</label>
+          <select id="editAppointmentStatus" required>
+            <option value="pending">Pending</option>
+            <option value="approved">Approved</option>
+            <option value="rejected">Rejected</option>
+          </select>
+        </div>
+        <div style="display: flex; gap: 12px;">
+          <button type="submit" class="btn" style="flex: 1;">Save Changes</button>
+          <button type="button" class="btn btn-danger" id="cancelEditBtn" style="flex: 1;">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Process Document Modal -->
+  <div class="modal" id="processDocumentModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Process Document Request</h3>
+        <button class="close-btn" id="closeProcessDocumentModal">×</button>
+      </div>
+      <form id="processDocumentForm">
+        <input type="hidden" id="processDocumentId" />
+        <input type="hidden" id="processDocumentUserId" />
+        <div class="form-group">
+          <label>Document Type</label>
+          <input type="text" id="processDocumentType" readonly />
+        </div>
+        <div class="form-group">
+          <label>Purpose</label>
+          <input type="text" id="processDocumentPurpose" readonly />
+        </div>
+        <div class="form-group">
+          <label>Delivery Method</label>
+          <div class="radio-group">
+            <div class="radio-option">
+              <input type="radio" id="deliveryDigital" name="deliveryMethod" value="digital" checked />
+              <label for="deliveryDigital" style="margin: 0; font-weight: normal;">Digital Copy</label>
+            </div>
+            <div class="radio-option">
+              <input type="radio" id="deliveryPrinted" name="deliveryMethod" value="printed" />
+              <label for="deliveryPrinted" style="margin: 0; font-weight: normal;">Printed Copy</label>
+            </div>
+          </div>
+        </div>
+        <div class="form-group" id="digitalLinkGroup">
+          <label>Digital Document Link (Optional)</label>
+          <input type="url" id="documentLink" placeholder="https://..." />
+        </div>
+        <div class="form-group">
+          <label>Admin Notes</label>
+          <textarea id="processDocumentNotes" placeholder="Any notes for the resident..."></textarea>
+        </div>
+        <div class="form-group">
+          <label>Status</label>
+          <select id="processDocumentStatus" required>
+            <option value="processing">Processing</option>
+            <option value="approved">Ready for Pickup/Download</option>
+            <option value="rejected">Rejected</option>
+          </select>
+        </div>
+        <div style="display: flex; gap: 12px;">
+          <button type="submit" class="btn" style="flex: 1;">Update Request</button>
+          <button type="button" class="btn btn-danger" id="cancelProcessBtn" style="flex: 1;">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Register Resident Modal -->
+  <div class="modal" id="registerResidentModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Register New Resident</h3>
+        <button class="close-btn" id="closeRegisterResidentModal">×</button>
+      </div>
+      <form id="registerResidentForm">
+        <div class="form-group">
+          <label>First Name</label>
+          <input type="text" id="residentFirstName" required />
+        </div>
+        <div class="form-group">
+          <label>Last Name</label>
+          <input type="text" id="residentLastName" required />
+        </div>
+        <div class="form-group">
+          <label>Email</label>
+          <input type="email" id="residentEmail" required />
+        </div>
+        <div class="form-group">
+          <label>Password</label>
+          <input type="password" id="residentPassword" required minlength="6" />
+        </div>
+        <div class="form-group">
+          <label>Address</label>
+          <input type="text" id="residentAddress" required />
+        </div>
+        <div class="form-group">
+          <label>Phone Number</label>
+          <input type="tel" id="residentPhone" required />
+        </div>
+        <button type="submit" class="btn" style="width: 100%;">Register Resident</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Firebase SDK -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+    import { getAuth, createUserWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+    import { getFirestore, doc, getDoc, setDoc, collection, addDoc, query, where, getDocs, orderBy, updateDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCw2Gf-FyZF9sBU450znJ1cyjjKWUkqTyY",
+      authDomain: "afpovaiweb-8a7c9.firebaseapp.com",
+      projectId: "afpovaiweb-8a7c9",
+      storageBucket: "afpovaiweb-8a7c9.firebasestorage.app",
+      messagingSenderId: "120025740192",
+      appId: "1:120025740192:web:9f62d7395959642009eac5"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    let currentAdmin = null;
+
+    // Check authentication
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        currentAdmin = user;
+        await loadAdminProfile(user.uid);
+        await loadDashboardStats();
+        await loadAllData();
+      } else {
+        window.location.href = 'login.html';
+      }
+    });
+
+    // Load admin profile
+    async function loadAdminProfile(uid) {
+      try {
+        const userDoc = await getDoc(doc(db, 'users', uid));
+        if (userDoc.exists()) {
+          const userData = userDoc.data();
+          document.getElementById('profileName').textContent = `${userData.firstName} ${userData.lastName}`;
+          document.getElementById('profileAvatar').textContent = userData.firstName[0] + userData.lastName[0];
+        }
+      } catch (error) {
+        console.error('Error loading profile:', error);
+      }
+    }
+
+    // Load dashboard stats
+    async function loadDashboardStats() {
+      try {
+        // Total residents
+        const usersQuery = query(collection(db, 'users'), where('role', '==', 'resident'));
+        const usersSnapshot = await getDocs(usersQuery);
+        document.getElementById('totalResidents').textContent = usersSnapshot.size;
+
+        // Pending appointments
+        const appointmentsQuery = query(collection(db, 'appointments'), where('status', '==', 'pending'));
+        const appointmentsSnapshot = await getDocs(appointmentsQuery);
+        document.getElementById('pendingAppointments').textContent = appointmentsSnapshot.size;
+
+        // Pending documents
+        const documentsQuery = query(collection(db, 'documentRequests'), where('status', '==', 'pending'));
+        const documentsSnapshot = await getDocs(documentsQuery);
+        document.getElementById('pendingDocuments').textContent = documentsSnapshot.size;
+
+        // Approved today
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const todayStr = today.toISOString();
+        
+        let approvedCount = 0;
+        const allAppointments = await getDocs(collection(db, 'appointments'));
+        allAppointments.forEach(doc => {
+          const data = doc.data();
+          if (data.status === 'approved' && data.updatedAt && data.updatedAt >= todayStr) {
+            approvedCount++;
+          }
+        });
+        document.getElementById('approvedToday').textContent = approvedCount;
+      } catch (error) {
+        console.error('Error loading stats:', error);
+      }
+    }
+
+    // Load all data
+    async function loadAllData() {
+      await loadAppointments();
+      await loadDocumentRequests();
+      await loadResidents();
+    }
+
+    // Load appointments
+    async function loadAppointments() {
+      try {
+        const q = query(collection(db, 'appointments'), orderBy('createdAt', 'desc'));
+        const snapshot = await getDocs(q);
+        
+        const tbody = document.getElementById('appointmentsTableBody');
+        
+        if (snapshot.empty) {
+          tbody.innerHTML = `
+            <tr>
+              <td colspan="6" style="text-align: center; padding: 40px; color: #999;">
+                No appointment requests
+              </td>
+            </tr>
+          `;
+          return;
+        }
+
+        tbody.innerHTML = '';
+        
+        for (const docSnap of snapshot.docs) {
+          const data = docSnap.data();
+          const userDoc = await getDoc(doc(db, 'users', data.userId));
+          const userName = userDoc.exists() ? `${userDoc.data().firstName} ${userDoc.data().lastName}` : 'Unknown';
+          
+          const row = document.createElement('tr');
+          row.innerHTML = `
+            <td>${userName}</td>
+            <td>${data.purpose}</td>
+            <td>${data.date}</td>
+            <td>${data.time}</td>
+            <td><span class="status-badge status-${data.status}">${data.status.toUpperCase()}</span></td>
+            <td>
+              <div class="action-buttons">
+                <button class="btn btn-sm btn-warning edit-appointment-btn" data-id="${docSnap.id}" data-user-id="${data.userId}">Edit</button>
+                <button class="btn btn-sm btn-success approve-appointment-btn" data-id="${docSnap.id}" data-user-id="${data.userId}">Approve</button>
+                <button class="btn btn-sm btn-danger reject-appointment-btn" data-id="${docSnap.id}" data-user-id="${data.userId}">Reject</button>
+              </div>
+            </td>
+          `;
+          tbody.appendChild(row);
+        }
+
+        // Add event listeners
+        document.querySelectorAll('.edit-appointment-btn').forEach(btn => {
+          btn.addEventListener('click', async (e) => {
+            const id = e.target.dataset.id;
+            const userId = e.target.dataset.userId;
+            await openEditAppointmentModal(id, userId);
+          });
+        });
+
+        document.querySelectorAll('.approve-appointment-btn').forEach(btn => {
+          btn.addEventListener('click', async (e) => {
+            const id = e.target.dataset.id;
+            const userId = e.target.dataset.userId;
+            await updateAppointmentStatus(id, userId, 'approved');
+          });
+        });
+
+        document.querySelectorAll('.reject-appointment-btn').forEach(btn => {
+          btn.addEventListener('click', async (e) => {
+            const id = e.target.dataset.id;
+            const userId = e.target.dataset.userId;
+            await updateAppointmentStatus(id, userId, 'rejected');
+          });
+        });
+      } catch (error) {
+        console.error('Error loading appointments:', error);
+      }
+    }
+
+    // Open edit appointment modal
+    async function openEditAppointmentModal(id, userId) {
+      try {
+        const appointmentDoc = await getDoc(doc(db, 'appointments', id));
+        if (appointmentDoc.exists()) {
+          const data = appointmentDoc.data();
+          document.getElementById('editAppointmentId').value = id;
+          document.getElementById('editAppointmentUserId').value = userId;
+          document.getElementById('editAppointmentPurpose').value = data.purpose;
+          document.getElementById('editAppointmentDate').value = data.date;
+          document.getElementById('editAppointmentTime').value = data.time;
+          document.getElementById('editAppointmentNotes').value = data.notes || '';
+          document.getElementById('editAppointmentStatus').value = data.status;
+          document.getElementById('editAppointmentModal').classList.add('active');
+        }
+      } catch (error) {
+        console.error('Error opening edit modal:', error);
+      }
+    }
+
+    // Update appointment status
+    async function updateAppointmentStatus(id, userId, status) {
+      if (!confirm(`Are you sure you want to ${status} this appointment?`)) return;
+      
+      try {
+        await updateDoc(doc(db, 'appointments', id), {
+          status: status,
+          updatedAt: new Date().toISOString()
+        });
+
+        await addDoc(collection(db, 'notifications'), {
+          userId: userId,
+          title: `Appointment ${status.charAt(0).toUpperCase() + status.slice(1)}`,
+          message: `Your appointment request has been ${status}.`,
+          read: false,
+          createdAt: new Date().toISOString()
+        });
+
+        alert(`Appointment ${status} successfully!`);
+        await loadAppointments();
+        await loadDashboardStats();
+      } catch (error) {
+        console.error('Error updating appointment:', error);
+        alert('Error updating appointment. Please try again.');
+      }
+    }
+
+    // Load document requests
+    async function loadDocumentRequests() {
+      try {
+        const q = query(collection(db, 'documentRequests'), orderBy('createdAt', 'desc'));
+        const snapshot = await getDocs(q);
+        
+        const tbody = document.getElementById('documentsTableBody');
+        
+        if (snapshot.empty) {
+          tbody.innerHTML = `
+            <tr>
+              <td colspan="5" style="text-align: center; padding: 40px; color: #999;">
+                No document requests
+              </td>
+            </tr>
+          `;
+          return;
+        }
+
+        tbody.innerHTML = '';
+        
+        for (const docSnap of snapshot.docs) {
+          const data = docSnap.data();
+          const userDoc = await getDoc(doc(db, 'users', data.userId));
+          const userName = userDoc.exists() ? `${userDoc.data().firstName} ${userDoc.data().lastName}` : 'Unknown';
+          
+          const row = document.createElement('tr');
+          row.innerHTML = `
+            <td>${userName}</td>
+            <td>${data.documentType}</td>
+            <td>${data.purpose}</td>
+            <td><span class="status-badge status-${data.status}">${data.status.toUpperCase()}</span></td>
+            <td>
+              <div class="action-buttons">
+                <button class="btn btn-sm btn-warning process-document-btn" data-id="${docSnap.id}" data-user-id="${data.userId}">Process</button>
+              </div>
+            </td>
+          `;
+          tbody.appendChild(row);
+        }
+
+        // Add event listeners
+        document.querySelectorAll('.process-document-btn').forEach(btn => {
+          btn.addEventListener('click', async (e) => {
+            const id = e.target.dataset.id;
+            const userId = e.target.dataset.userId;
+            await openProcessDocumentModal(id, userId);
+          });
+        });
+      } catch (error) {
+        console.error('Error loading document requests:', error);
+      }
+    }
+
+    // Open process document modal
+    async function openProcessDocumentModal(id, userId) {
+      try {
+        const documentDoc = await getDoc(doc(db, 'documentRequests', id));
+        if (documentDoc.exists()) {
+          const data = documentDoc.data();
+          document.getElementById('processDocumentId').value = id;
+          document.getElementById('processDocumentUserId').value = userId;
+          document.getElementById('processDocumentType').value = data.documentType;
+          document.getElementById('processDocumentPurpose').value = data.purpose;
+          document.getElementById('processDocumentNotes').value = data.notes || '';
+          document.getElementById('processDocumentStatus').value = data.status;
+          document.getElementById('documentLink').value = data.documentLink || '';
+          document.getElementById('processDocumentModal').classList.add('active');
+        }
+      } catch (error) {
+        console.error('Error opening process modal:', error);
+      }
+    }
+
+    // Load residents
+    async function loadResidents() {
+      try {
+        const q = query(collection(db, 'users'), where('role', '==', 'resident'), orderBy('createdAt', 'desc'));
+        const snapshot = await getDocs(q);
+        
+        const tbody = document.getElementById('residentsTableBody');
+        
+        if (snapshot.empty) {
+          tbody.innerHTML = `
+            <tr>
+              <td colspan="5" style="text-align: center; padding: 40px; color: #999;">
+                No residents registered
+              </td>
+            </tr>
+          `;
+          return;
+        }
+
+        tbody.innerHTML = '';
+        
+        snapshot.forEach(doc => {
+          const data = doc.data();
+          const row = document.createElement('tr');
+          row.innerHTML = `
+            <td>${data.firstName} ${data.lastName}</td>
+            <td>${data.email}</td>
+            <td>${data.address || 'N/A'}</td>
+            <td>${data.phone || 'N/A'}</td>
+            <td>${formatDate(data.createdAt)}</td>
+          `;
+          tbody.appendChild(row);
+        });
+      } catch (error) {
+        console.error('Error loading residents:', error);
+      }
+    }
+
+    // Format date
+    function formatDate(dateString) {
+      if (!dateString) return 'N/A';
+      const date = new Date(dateString);
+      return date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+    }
+
+    // Navigation
+    document.querySelectorAll('.nav-item').forEach(item => {
+      item.addEventListener('click', () => {
+        document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+        item.classList.add('active');
+        
+        const page = item.dataset.page;
+        document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
+        document.getElementById(`${page}Section`).classList.add('active');
+        
+        const titles = {
+          home: 'Home',
+          appointments: 'Appointments',
+          documents: 'Document Requests',
+          residents: 'Manage Residents'
+        };
+        document.getElementById('pageTitle').textContent = titles[page];
+      });
+    });
+
+    // Profile section click
+    document.getElementById('profileSection').addEventListener('click', (e) => {
+      e.stopPropagation();
+      const dropdown = document.getElementById('profileDropdown');
+      dropdown.classList.toggle('active');
+    });
+
+    // Close dropdowns when clicking outside
+    document.addEventListener('click', () => {
+      document.getElementById('profileDropdown').classList.remove('active');
+    });
+
+    // View profile button
+    document.getElementById('viewProfile').addEventListener('click', () => {
+      window.location.href = 'profile.html';
+    });
+
+    // Logout button
+    document.getElementById('logoutBtn').addEventListener('click', async () => {
+      if (confirm('Are you sure you want to log out?')) {
+        try {
+          await signOut(auth);
+          window.location.href = 'login.html';
+        } catch (error) {
+          console.error('Error signing out:', error);
+        }
+      }
+    });
+
+    // Quick action buttons
+    document.getElementById('registerResidentBtn').addEventListener('click', () => {
+      document.getElementById('registerResidentModal').classList.add('active');
+    });
+
+    document.getElementById('viewAppointmentsBtn').addEventListener('click', () => {
+      document.querySelector('[data-page="appointments"]').click();
+    });
+
+    document.getElementById('viewDocumentsBtn').addEventListener('click', () => {
+      document.querySelector('[data-page="documents"]').click();
+    });
+
+    // Modal controls
+    document.getElementById('closeEditAppointmentModal').addEventListener('click', () => {
+      document.getElementById('editAppointmentModal').classList.remove('active');
+    });
+
+    document.getElementById('cancelEditBtn').addEventListener('click', () => {
+      document.getElementById('editAppointmentModal').classList.remove('active');
+    });
+
+    document.getElementById('closeProcessDocumentModal').addEventListener('click', () => {
+      document.getElementById('processDocumentModal').classList.remove('active');
+    });
+
+    document.getElementById('cancelProcessBtn').addEventListener('click', () => {
+      document.getElementById('processDocumentModal').classList.remove('active');
+    });
+
+    document.getElementById('closeRegisterResidentModal').addEventListener('click', () => {
+      document.getElementById('registerResidentModal').classList.remove('active');
+    });
+
+    document.getElementById('addResidentBtn').addEventListener('click', () => {
+      document.getElementById('registerResidentModal').classList.add('active');
+    });
+
+    // Toggle digital link field
+    document.querySelectorAll('input[name="deliveryMethod"]').forEach(radio => {
+      radio.addEventListener('change', (e) => {
+        const digitalLinkGroup = document.getElementById('digitalLinkGroup');
+        if (e.target.value === 'digital') {
+          digitalLinkGroup.style.display = 'block';
+        } else {
+          digitalLinkGroup.style.display = 'none';
+        }
+      });
+    });
+
+    // Submit edit appointment form
+    document.getElementById('editAppointmentForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      try {
+        const id = document.getElementById('editAppointmentId').value;
+        const userId = document.getElementById('editAppointmentUserId').value;
+        
+        await updateDoc(doc(db, 'appointments', id), {
+          purpose: document.getElementById('editAppointmentPurpose').value,
+          date: document.getElementById('editAppointmentDate').value,
+          time: document.getElementById('editAppointmentTime').value,
+          notes: document.getElementById('editAppointmentNotes').value,
+          status: document.getElementById('editAppointmentStatus').value,
+          updatedAt: new Date().toISOString()
+        });
+
+        await addDoc(collection(db, 'notifications'), {
+          userId: userId,
+          title: 'Appointment Updated',
+          message: 'Your appointment has been updated by the administrator.',
+          read: false,
+          createdAt: new Date().toISOString()
+        });
+
+        alert('Appointment updated successfully!');
+        document.getElementById('editAppointmentModal').classList.remove('active');
+        await loadAppointments();
+        await loadDashboardStats();
+      } catch (error) {
+        console.error('Error updating appointment:', error);
+        alert('Error updating appointment. Please try again.');
+      }
+    });
+
+    // Submit process document form
+    document.getElementById('processDocumentForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      try {
+        const id = document.getElementById('processDocumentId').value;
+        const userId = document.getElementById('processDocumentUserId').value;
+        const deliveryMethod = document.querySelector('input[name="deliveryMethod"]:checked').value;
+        
+        const updateData = {
+          status: document.getElementById('processDocumentStatus').value,
+          deliveryMethod: deliveryMethod,
+          adminNotes: document.getElementById('processDocumentNotes').value,
+          updatedAt: new Date().toISOString()
+        };
+
+        if (deliveryMethod === 'digital') {
+          updateData.documentLink = document.getElementById('documentLink').value;
+        }
+
+        await updateDoc(doc(db, 'documentRequests', id), updateData);
+
+        let notificationMessage = 'Your document request has been updated.';
+        if (updateData.status === 'approved') {
+          notificationMessage = deliveryMethod === 'digital' 
+            ? 'Your document is ready for download!' 
+            : 'Your document is ready for pickup!';
+        }
+
+        await addDoc(collection(db, 'notifications'), {
+          userId: userId,
+          title: 'Document Request Updated',
+          message: notificationMessage,
+          read: false,
+          createdAt: new Date().toISOString()
+        });
+
+        alert('Document request updated successfully!');
+        document.getElementById('processDocumentModal').classList.remove('active');
+        await loadDocumentRequests();
+        await loadDashboardStats();
+      } catch (error) {
+        console.error('Error updating document request:', error);
+        alert('Error updating document request. Please try again.');
+      }
+    });
+
+    // Submit register resident form
+    document.getElementById('registerResidentForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      try {
+        const email = document.getElementById('residentEmail').value;
+        const password = document.getElementById('residentPassword').value;
+        const firstName = document.getElementById('residentFirstName').value;
+        const lastName = document.getElementById('residentLastName').value;
+        const address = document.getElementById('residentAddress').value;
+        const phone = document.getElementById('residentPhone').value;
+
+        // Create user account
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        const user = userCredential.user;
+
+        // Store user data
+        await setDoc(doc(db, 'users', user.uid), {
+          firstName: firstName,
+          lastName: lastName,
+          email: email,
+          address: address,
+          phone: phone,
+          role: 'resident',
+          createdAt: new Date().toISOString()
+        });
+
+        // Send welcome notification
+        await addDoc(collection(db, 'notifications'), {
+          userId: user.uid,
+          title: 'Welcome to AFPOVAI!',
+          message: 'Your account has been created successfully. You can now access all resident services.',
+          read: false,
+          createdAt: new Date().toISOString()
+        });
+
+        alert('Resident registered successfully!');
+        document.getElementById('registerResidentModal').classList.remove('active');
+        document.getElementById('registerResidentForm').reset();
+        await loadResidents();
+        await loadDashboardStats();
+      } catch (error) {
+        console.error('Error registering resident:', error);
+        if (error.code === 'auth/email-already-in-use') {
+          alert('Email is already in use. Please use a different email.');
+        } else {
+          alert('Error registering resident. Please try again.');
+        }
+      }
+    });
+  </script>
+
+</body>
+</html>

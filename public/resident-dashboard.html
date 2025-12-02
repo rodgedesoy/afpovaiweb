@@ -1,0 +1,1422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Resident Dashboard — AFP OVAI</title>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background: #f5f7fa;
+      display: flex;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      width: 260px;
+      background: linear-gradient(180deg, #0a3dff, #0096ff);
+      color: white;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+    }
+
+    .sidebar-header {
+      padding: 24px 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border-bottom: 1px solid rgba(255,255,255,0.2);
+    }
+
+    .logo {
+      width: 40px;
+      height: 40px;
+      background: white;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      color: #0a3dff;
+      font-size: 16px;
+    }
+
+    .sidebar-header h2 {
+      font-size: 20px;
+      font-weight: bold;
+    }
+
+    .sidebar-nav {
+      flex: 1;
+      padding: 20px 0;
+    }
+
+    .nav-item {
+      padding: 14px 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+      transition: 0.2s;
+      color: white;
+      text-decoration: none;
+      border-left: 4px solid transparent;
+    }
+
+    .nav-item:hover {
+      background: rgba(255,255,255,0.1);
+      border-left-color: white;
+    }
+
+    .nav-item.active {
+      background: rgba(255,255,255,0.2);
+      border-left-color: white;
+      font-weight: bold;
+    }
+
+    .nav-icon {
+      font-size: 20px;
+      width: 24px;
+      text-align: center;
+    }
+
+    /* Main Content */
+    .main-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    /* Top Bar */
+    .top-bar {
+      background: white;
+      padding: 16px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+
+    .top-bar-left h1 {
+      font-size: 24px;
+      color: #1b1b1b;
+    }
+
+    .top-bar-right {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .notification-bell {
+      position: relative;
+      cursor: pointer;
+      font-size: 24px;
+      color: transparent;
+      transition: 0.2s;
+      text-shadow: 0 0 0 #666;
+    }
+
+    .notification-bell:hover {
+      text-shadow: 0 0 0 #0a73ff;
+    }
+
+    .notification-badge {
+      position: absolute;
+      top: -4px;
+      right: -4px;
+      background: #ff4444;
+      color: white;
+      border-radius: 50%;
+      min-width: 18px;
+      height: 18px;
+      padding: 0 4px;
+      font-size: 11px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+    }
+
+    .notification-badge.hidden {
+      display: none;
+    }
+
+    .notification-dropdown {
+      position: absolute;
+      top: 60px;
+      right: 80px;
+      width: 350px;
+      max-height: 400px;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+      display: none;
+      flex-direction: column;
+      z-index: 100;
+    }
+
+    .notification-dropdown.active {
+      display: flex;
+    }
+
+    .notification-header {
+      padding: 16px 20px;
+      border-bottom: 1px solid #e0e0e0;
+      font-weight: bold;
+      color: #1b1b1b;
+    }
+
+    .notification-list {
+      flex: 1;
+      overflow-y: auto;
+      max-height: 340px;
+    }
+
+    .notification-item {
+      padding: 16px 20px;
+      border-bottom: 1px solid #f0f0f0;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .notification-item:hover {
+      background: #f8f9fa;
+    }
+
+    .notification-item.unread {
+      background: #f0f7ff;
+    }
+
+    .notification-title {
+      font-weight: bold;
+      color: #1b1b1b;
+      font-size: 14px;
+      margin-bottom: 4px;
+    }
+
+    .notification-message {
+      font-size: 13px;
+      color: #666;
+      margin-bottom: 4px;
+    }
+
+    .notification-time {
+      font-size: 12px;
+      color: #999;
+    }
+
+    .profile-section {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+      padding: 8px 12px;
+      border-radius: 8px;
+      transition: 0.2s;
+      position: relative;
+    }
+
+    .profile-section:hover {
+      background: #f5f7fa;
+    }
+
+    .profile-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #0a3dff, #0096ff);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 16px;
+    }
+
+    .profile-info {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .profile-name {
+      font-weight: bold;
+      color: #1b1b1b;
+      font-size: 14px;
+    }
+
+    .profile-role {
+      font-size: 12px;
+      color: #666;
+    }
+
+    .profile-dropdown {
+      position: absolute;
+      top: 60px;
+      right: 30px;
+      width: 200px;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+      display: none;
+      flex-direction: column;
+      z-index: 100;
+      overflow: hidden;
+    }
+
+    .profile-dropdown.active {
+      display: flex;
+    }
+
+    .profile-dropdown-item {
+      padding: 14px 20px;
+      cursor: pointer;
+      transition: 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: #1b1b1b;
+      font-size: 14px;
+    }
+
+    .profile-dropdown-item:hover {
+      background: #f5f7fa;
+    }
+
+    .profile-dropdown-item.logout {
+      color: #dc3545;
+      border-top: 1px solid #e0e0e0;
+    }
+
+    /* Content Area */
+    .content-area {
+      flex: 1;
+      overflow-y: auto;
+      padding: 30px;
+    }
+
+    .page-section {
+      display: none;
+    }
+
+    .page-section.active {
+      display: block;
+    }
+
+    .card {
+      background: white;
+      border-radius: 12px;
+      padding: 24px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      margin-bottom: 20px;
+    }
+
+    .card h3 {
+      font-size: 20px;
+      color: #1b1b1b;
+      margin-bottom: 16px;
+    }
+
+    .btn {
+      padding: 12px 24px;
+      border: none;
+      background: #0a73ff;
+      color: white;
+      font-size: 14px;
+      font-weight: bold;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: 0.25s;
+    }
+
+    .btn:hover {
+      background: #084ed1;
+    }
+
+    /* Announcements */
+    .announcement-item {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 20px;
+      border-radius: 12px;
+      margin-bottom: 16px;
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+    }
+
+    .announcement-title {
+      font-size: 18px;
+      font-weight: bold;
+      margin-bottom: 8px;
+    }
+
+    .announcement-content {
+      font-size: 14px;
+      line-height: 1.5;
+      margin-bottom: 8px;
+    }
+
+    .announcement-date {
+      font-size: 12px;
+      opacity: 0.9;
+    }
+
+    /* Events */
+    .event-item {
+      background: #f8f9fa;
+      padding: 16px;
+      border-radius: 8px;
+      border-left: 4px solid #28a745;
+      margin-bottom: 12px;
+    }
+
+    .event-title {
+      font-weight: bold;
+      color: #1b1b1b;
+      margin-bottom: 8px;
+    }
+
+    .event-details {
+      font-size: 14px;
+      color: #666;
+    }
+
+    /* Appointments & History */
+    .appointment-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .appointment-item {
+      background: #f8f9fa;
+      padding: 16px;
+      border-radius: 8px;
+      border-left: 4px solid #0a73ff;
+    }
+
+    .appointment-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .appointment-title {
+      font-weight: bold;
+      color: #1b1b1b;
+    }
+
+    .status-badge {
+      padding: 4px 12px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: bold;
+    }
+
+    .status-pending {
+      background: #fff3cd;
+      color: #856404;
+    }
+
+    .status-approved {
+      background: #d4edda;
+      color: #155724;
+    }
+
+    .status-rejected {
+      background: #f8d7da;
+      color: #721c24;
+    }
+
+    .status-processing {
+      background: #cfe2ff;
+      color: #084298;
+    }
+
+    .appointment-details {
+      font-size: 14px;
+      color: #666;
+    }
+
+    /* Documents */
+    .document-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 16px;
+    }
+
+    .document-card {
+      background: #f8f9fa;
+      padding: 20px;
+      border-radius: 8px;
+      text-align: center;
+      cursor: pointer;
+      transition: 0.2s;
+      border: 2px solid transparent;
+    }
+
+    .document-card:hover {
+      border-color: #0a73ff;
+      transform: translateY(-2px);
+    }
+
+    .document-icon {
+      font-size: 48px;
+      margin-bottom: 12px;
+    }
+
+    .document-name {
+      font-weight: bold;
+      color: #1b1b1b;
+      font-size: 14px;
+    }
+
+    /* History Tabs */
+    .history-tabs {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+      border-bottom: 2px solid #e0e0e0;
+    }
+
+    .history-tab {
+      padding: 12px 24px;
+      cursor: pointer;
+      border: none;
+      background: none;
+      color: #666;
+      font-size: 14px;
+      font-weight: bold;
+      border-bottom: 3px solid transparent;
+      transition: 0.2s;
+    }
+
+    .history-tab:hover {
+      color: #0a73ff;
+    }
+
+    .history-tab.active {
+      color: #0a73ff;
+      border-bottom-color: #0a73ff;
+    }
+
+    .history-content {
+      display: none;
+    }
+
+    .history-content.active {
+      display: block;
+    }
+
+    /* Modal */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.5);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal.active {
+      display: flex;
+    }
+
+    .modal-content {
+      background: white;
+      border-radius: 12px;
+      padding: 30px;
+      max-width: 500px;
+      width: 90%;
+      max-height: 80vh;
+      overflow-y: auto;
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .modal-header h3 {
+      font-size: 20px;
+      color: #1b1b1b;
+    }
+
+    .close-btn {
+      background: none;
+      border: none;
+      font-size: 24px;
+      cursor: pointer;
+      color: #666;
+    }
+
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: bold;
+      color: #1b1b1b;
+      font-size: 14px;
+    }
+
+    .form-group input,
+    .form-group textarea,
+    .form-group select {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #d0d7de;
+      border-radius: 6px;
+      font-size: 14px;
+    }
+
+    .form-group textarea {
+      resize: vertical;
+      min-height: 100px;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: #999;
+    }
+
+    .empty-state-icon {
+      font-size: 64px;
+      margin-bottom: 16px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <div class="sidebar-header">
+      <div class="logo">AFP</div>
+      <h2>AFPOVAI</h2>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-item active" data-page="home">
+        <span class="nav-icon">🏠</span>
+        <span>Home</span>
+      </div>
+      <div class="nav-item" data-page="appointments">
+        <span class="nav-icon">📅</span>
+        <span>Appointments</span>
+      </div>
+      <div class="nav-item" data-page="documents">
+        <span class="nav-icon">📄</span>
+        <span>Documents</span>
+      </div>
+      <div class="nav-item" data-page="history">
+        <span class="nav-icon">📋</span>
+        <span>History</span>
+      </div>
+    </nav>
+  </div>
+
+  <!-- Main Content -->
+  <div class="main-content">
+    <!-- Top Bar -->
+    <div class="top-bar">
+      <div class="top-bar-left">
+        <h1 id="pageTitle">Home</h1>
+      </div>
+      <div class="top-bar-right">
+        <div class="notification-bell" id="notificationBell">
+          🔔
+          <span class="notification-badge hidden" id="notificationBadge">0</span>
+        </div>
+        <div class="notification-dropdown" id="notificationDropdown">
+          <div class="notification-header">Notifications</div>
+          <div class="notification-list" id="notificationList">
+            <div class="empty-state">
+              <p style="font-size: 14px;">No notifications</p>
+            </div>
+          </div>
+        </div>
+        <div class="profile-section" id="profileSection">
+          <div class="profile-avatar" id="profileAvatar">JD</div>
+          <div class="profile-info">
+            <div class="profile-name" id="profileName">John Doe</div>
+            <div class="profile-role">Resident</div>
+          </div>
+        </div>
+        <div class="profile-dropdown" id="profileDropdown">
+          <div class="profile-dropdown-item" id="viewProfile">
+            <span>👤</span>
+            <span>View Profile</span>
+          </div>
+          <div class="profile-dropdown-item logout" id="logoutBtn">
+            <span>🚪</span>
+            <span>Log Out</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Content Area -->
+    <div class="content-area">
+      <!-- Home Section -->
+      <div class="page-section active" id="homeSection">
+        <div class="card">
+          <h3>📢 Announcements</h3>
+          <div id="announcementList">
+            <div class="empty-state">
+              <div class="empty-state-icon">📢</div>
+              <p>No announcements at this time.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>📅 Upcoming Events</h3>
+          <div id="eventList">
+            <div class="empty-state">
+              <div class="empty-state-icon">🎉</div>
+              <p>No upcoming events.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Appointments Section -->
+      <div class="page-section" id="appointmentsSection">
+        <div class="card">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <h3>My Appointments</h3>
+            <button class="btn" id="newAppointmentBtn">+ New Appointment</button>
+          </div>
+          <div class="appointment-list" id="appointmentList">
+            <div class="empty-state">
+              <div class="empty-state-icon">📅</div>
+              <p>No appointments yet. Click "New Appointment" to request one.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Documents Section -->
+      <div class="page-section" id="documentsSection">
+        <div class="card">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <h3>Available Documents</h3>
+            <button class="btn" id="requestDocumentBtn">+ Request Document</button>
+          </div>
+          <div class="document-grid">
+            <div class="document-card" data-doc="billing">
+              <div class="document-icon">💵</div>
+              <div class="document-name">Billing Statement</div>
+            </div>
+            <div class="document-card" data-doc="clearance">
+              <div class="document-icon">✅</div>
+              <div class="document-name">Barangay Clearance</div>
+            </div>
+            <div class="document-card" data-doc="certificate">
+              <div class="document-icon">📜</div>
+              <div class="document-name">Residency Certificate</div>
+            </div>
+            <div class="document-card" data-doc="permit">
+              <div class="document-icon">📋</div>
+              <div class="document-name">Building Permit</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>My Document Requests</h3>
+          <div class="appointment-list" id="documentRequestList">
+            <div class="empty-state">
+              <div class="empty-state-icon">📄</div>
+              <p>No document requests yet.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- History Section -->
+      <div class="page-section" id="historySection">
+        <div class="card">
+          <h3>📋 History</h3>
+          <div class="history-tabs">
+            <button class="history-tab active" data-history="appointments">Appointments</button>
+            <button class="history-tab" data-history="documents">Documents</button>
+          </div>
+
+          <div class="history-content active" id="appointmentsHistory">
+            <div class="appointment-list" id="appointmentsHistoryList">
+              <div class="empty-state">
+                <div class="empty-state-icon">📅</div>
+                <p>No appointment history.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="history-content" id="documentsHistory">
+            <div class="appointment-list" id="documentsHistoryList">
+              <div class="empty-state">
+                <div class="empty-state-icon">📄</div>
+                <p>No document request history.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Appointment Modal -->
+  <div class="modal" id="appointmentModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Request New Appointment</h3>
+        <button class="close-btn" id="closeAppointmentModal">×</button>
+      </div>
+      <form id="appointmentForm">
+        <div class="form-group">
+          <label>Purpose</label>
+          <input type="text" id="appointmentPurpose" placeholder="e.g., Document Verification" required />
+        </div>
+        <div class="form-group">
+          <label>Preferred Date</label>
+          <input type="date" id="appointmentDate" required />
+        </div>
+        <div class="form-group">
+          <label>Preferred Time</label>
+          <input type="time" id="appointmentTime" required />
+        </div>
+        <div class="form-group">
+          <label>Additional Notes</label>
+          <textarea id="appointmentNotes" placeholder="Any additional information..."></textarea>
+        </div>
+        <button type="submit" class="btn" style="width: 100%;">Submit Request</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Document Request Modal -->
+  <div class="modal" id="documentModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Request Document</h3>
+        <button class="close-btn" id="closeDocumentModal">×</button>
+      </div>
+      <form id="documentForm">
+        <div class="form-group">
+          <label>Document Type</label>
+          <select id="documentType" required>
+            <option value="">Select a document</option>
+            <option value="billing">Billing Statement</option>
+            <option value="clearance">Barangay Clearance</option>
+            <option value="certificate">Residency Certificate</option>
+            <option value="permit">Building Permit</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Purpose</label>
+          <input type="text" id="documentPurpose" placeholder="e.g., For employment" required />
+        </div>
+        <div class="form-group">
+          <label>Additional Notes</label>
+          <textarea id="documentNotes" placeholder="Any additional information..."></textarea>
+        </div>
+        <button type="submit" class="btn" style="width: 100%;">Submit Request</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Firebase SDK -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+    import { getFirestore, doc, getDoc, collection, addDoc, query, where, getDocs, orderBy, onSnapshot } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCw2Gf-FyZF9sBU450znJ1cyjjKWUkqTyY",
+      authDomain: "afpovaiweb-8a7c9.firebaseapp.com",
+      projectId: "afpovaiweb-8a7c9",
+      storageBucket: "afpovaiweb-8a7c9.firebasestorage.app",
+      messagingSenderId: "120025740192",
+      appId: "1:120025740192:web:9f62d7395959642009eac5"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    let currentUser = null;
+    let notificationUnsubscribe = null;
+
+    // Check authentication
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        currentUser = user;
+        await loadUserProfile(user.uid);
+        await loadAllData(user.uid);
+        setupRealtimeNotifications(user.uid);
+      } else {
+        const faceLoginUser = sessionStorage.getItem('faceLoginUser');
+        if (faceLoginUser) {
+          const userData = JSON.parse(faceLoginUser);
+          currentUser = { uid: userData.uid };
+          document.getElementById('profileName').textContent = `${userData.firstName} ${userData.lastName}`;
+          document.getElementById('profileAvatar').textContent = userData.firstName[0] + userData.lastName[0];
+          await loadAllData(userData.uid);
+          setupRealtimeNotifications(userData.uid);
+        } else {
+          window.location.href = 'login.html';
+        }
+      }
+    });
+
+    // Load user profile
+    async function loadUserProfile(uid) {
+      try {
+        const userDoc = await getDoc(doc(db, 'users', uid));
+        if (userDoc.exists()) {
+          const userData = userDoc.data();
+          document.getElementById('profileName').textContent = `${userData.firstName} ${userData.lastName}`;
+          document.getElementById('profileAvatar').textContent = userData.firstName[0] + userData.lastName[0];
+        }
+      } catch (error) {
+        console.error('Error loading profile:', error);
+      }
+    }
+
+    // Load all data
+    async function loadAllData(uid) {
+      await loadAnnouncements();
+      await loadEvents();
+      await loadAppointments(uid);
+      await loadDocumentRequests(uid);
+      await loadHistory(uid);
+    }
+
+    // Setup realtime notifications
+    function setupRealtimeNotifications(uid) {
+      if (notificationUnsubscribe) {
+        notificationUnsubscribe();
+      }
+
+      const notificationsQuery = query(
+        collection(db, 'notifications'),
+        where('userId', '==', uid),
+        orderBy('createdAt', 'desc')
+      );
+
+      notificationUnsubscribe = onSnapshot(notificationsQuery, (snapshot) => {
+        const notifications = [];
+        let unreadCount = 0;
+
+        snapshot.forEach(doc => {
+          const data = doc.data();
+          notifications.push({ id: doc.id, ...data });
+          if (!data.read) unreadCount++;
+        });
+
+        updateNotificationBadge(unreadCount);
+        displayNotifications(notifications);
+      });
+    }
+
+    // Update notification badge
+    function updateNotificationBadge(count) {
+      const badge = document.getElementById('notificationBadge');
+      if (count > 0) {
+        badge.textContent = count > 99 ? '99+' : count;
+        badge.classList.remove('hidden');
+      } else {
+        badge.classList.add('hidden');
+      }
+    }
+
+    // Display notifications
+    function displayNotifications(notifications) {
+      const notificationList = document.getElementById('notificationList');
+      
+      if (notifications.length === 0) {
+        notificationList.innerHTML = `
+          <div class="empty-state">
+            <p style="font-size: 14px;">No notifications</p>
+          </div>
+        `;
+        return;
+      }
+
+      notificationList.innerHTML = '';
+      notifications.forEach(notif => {
+        const item = document.createElement('div');
+        item.className = `notification-item ${!notif.read ? 'unread' : ''}`;
+        item.innerHTML = `
+          <div class="notification-title">${notif.title}</div>
+          <div class="notification-message">${notif.message}</div>
+          <div class="notification-time">${formatTimestamp(notif.createdAt)}</div>
+        `;
+        notificationList.appendChild(item);
+      });
+    }
+
+    // Format timestamp
+    function formatTimestamp(timestamp) {
+      if (!timestamp) return '';
+      const date = new Date(timestamp);
+      const now = new Date();
+      const diff = now - date;
+      const minutes = Math.floor(diff / 60000);
+      const hours = Math.floor(diff / 3600000);
+      const days = Math.floor(diff / 86400000);
+
+      if (minutes < 1) return 'Just now';
+      if (minutes < 60) return `${minutes}m ago`;
+      if (hours < 24) return `${hours}h ago`;
+      if (days < 7) return `${days}d ago`;
+      return date.toLocaleDateString();
+    }
+
+    // Load announcements
+    async function loadAnnouncements() {
+      try {
+        const q = query(
+          collection(db, 'announcements'),
+          orderBy('createdAt', 'desc')
+        );
+        const snapshot = await getDocs(q);
+        
+        const announcementList = document.getElementById('announcementList');
+        
+        if (snapshot.empty) {
+          announcementList.innerHTML = `
+            <div class="empty-state">
+              <div class="empty-state-icon">📢</div>
+              <p>No announcements at this time.</p>
+            </div>
+          `;
+        } else {
+          announcementList.innerHTML = '';
+          snapshot.forEach(doc => {
+            const data = doc.data();
+            const item = document.createElement('div');
+            item.className = 'announcement-item';
+            item.innerHTML = `
+              <div class="announcement-title">${data.title}</div>
+              <div class="announcement-content">${data.content}</div>
+              <div class="announcement-date">📅 ${formatDate(data.createdAt)}</div>
+            `;
+            announcementList.appendChild(item);
+          });
+        }
+      } catch (error) {
+        console.error('Error loading announcements:', error);
+      }
+    }
+
+    // Load events
+    async function loadEvents() {
+      try {
+        const q = query(
+          collection(db, 'events'),
+          orderBy('eventDate', 'asc')
+        );
+        const snapshot = await getDocs(q);
+        
+        const eventList = document.getElementById('eventList');
+        
+        if (snapshot.empty) {
+          eventList.innerHTML = `
+            <div class="empty-state">
+              <div class="empty-state-icon">🎉</div>
+              <p>No upcoming events.</p>
+            </div>
+          `;
+        } else {
+          eventList.innerHTML = '';
+          snapshot.forEach(doc => {
+            const data = doc.data();
+            const item = document.createElement('div');
+            item.className = 'event-item';
+            item.innerHTML = `
+              <div class="event-title">${data.title}</div>
+              <div class="event-details">
+                📅 ${formatDate(data.eventDate)} ${data.eventTime ? `at ${data.eventTime}` : ''}<br>
+                📍 ${data.location || 'TBA'}<br>
+                ${data.description ? `📝 ${data.description}` : ''}
+              </div>
+            `;
+            eventList.appendChild(item);
+          });
+        }
+      } catch (error) {
+        console.error('Error loading events:', error);
+      }
+    }
+
+    // Format date
+    function formatDate(dateString) {
+      if (!dateString) return '';
+      const date = new Date(dateString);
+      return date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+    }
+
+    // Load Appointments
+    async function loadAppointments(uid) {
+      try {
+        const q = query(
+          collection(db, 'appointments'),
+          where('userId', '==', uid),
+          where('status', '==', 'pending'),
+          orderBy('createdAt', 'desc')
+        );
+        const snapshot = await getDocs(q);
+        
+        const appointmentList = document.getElementById('appointmentList');
+        
+        if (snapshot.empty) {
+          appointmentList.innerHTML = `
+            <div class="empty-state">
+              <div class="empty-state-icon">📅</div>
+              <p>No appointments yet. Click "New Appointment" to request one.</p>
+            </div>
+          `;
+        } else {
+          appointmentList.innerHTML = '';
+          snapshot.forEach(doc => {
+            const data = doc.data();
+            const item = document.createElement('div');
+            item.className = 'appointment-item';
+            item.innerHTML = `
+              <div class="appointment-header">
+                <div class="appointment-title">${data.purpose}</div>
+                <span class="status-badge status-${data.status}">${data.status.toUpperCase()}</span>
+              </div>
+              <div class="appointment-details">
+                📅 ${data.date} at ${data.time}
+                ${data.notes ? `<br>📝 ${data.notes}` : ''}
+              </div>
+            `;
+            appointmentList.appendChild(item);
+          });
+        }
+      } catch (error) {
+        console.error('Error loading appointments:', error);
+      }
+    }
+
+    // Load Document Requests
+    async function loadDocumentRequests(uid) {
+      try {
+        const q = query(
+          collection(db, 'documentRequests'),
+          where('userId', '==', uid),
+          where('status', 'in', ['pending', 'processing']),
+          orderBy('createdAt', 'desc')
+        );
+        const snapshot = await getDocs(q);
+        
+        const documentRequestList = document.getElementById('documentRequestList');
+        
+        if (snapshot.empty) {
+          documentRequestList.innerHTML = `
+            <div class="empty-state">
+              <div class="empty-state-icon">📄</div>
+              <p>No document requests yet.</p>
+            </div>
+          `;
+        } else {
+          documentRequestList.innerHTML = '';
+          snapshot.forEach(doc => {
+            const data = doc.data();
+            const item = document.createElement('div');
+            item.className = 'appointment-item';
+            item.innerHTML = `
+              <div class="appointment-header">
+                <div class="appointment-title">${data.documentType}</div>
+                <span class="status-badge status-${data.status}">${data.status.toUpperCase()}</span>
+              </div>
+              <div class="appointment-details">
+                Purpose: ${data.purpose}
+                ${data.notes ? `<br>📝 ${data.notes}` : ''}
+                ${data.deliveryMethod ? `<br>📦 Delivery: ${data.deliveryMethod}` : ''}
+                ${data.documentLink ? `<br><a href="${data.documentLink}" target="_blank" style="color: #0a73ff;">Download Document</a>` : ''}
+              </div>
+            `;
+            documentRequestList.appendChild(item);
+          });
+        }
+      } catch (error) {
+        console.error('Error loading document requests:', error);
+      }
+    }
+
+    // Load History
+    async function loadHistory(uid) {
+      // Load appointments history
+      try {
+        const q = query(
+          collection(db, 'appointments'),
+          where('userId', '==', uid),
+          orderBy('createdAt', 'desc')
+        );
+        const snapshot = await getDocs(q);
+        
+        const appointmentsHistoryList = document.getElementById('appointmentsHistoryList');
+        
+        if (snapshot.empty) {
+          appointmentsHistoryList.innerHTML = `
+            <div class="empty-state">
+              <div class="empty-state-icon">📅</div>
+              <p>No appointment history.</p>
+            </div>
+          `;
+        } else {
+          appointmentsHistoryList.innerHTML = '';
+          snapshot.forEach(doc => {
+            const data = doc.data();
+            const item = document.createElement('div');
+            item.className = 'appointment-item';
+            item.innerHTML = `
+              <div class="appointment-header">
+                <div class="appointment-title">${data.purpose}</div>
+                <span class="status-badge status-${data.status}">${data.status.toUpperCase()}</span>
+              </div>
+              <div class="appointment-details">
+                📅 ${data.date} at ${data.time}<br>
+                🕐 Requested: ${formatDate(data.createdAt)}
+                ${data.notes ? `<br>📝 ${data.notes}` : ''}
+              </div>
+            `;
+            appointmentsHistoryList.appendChild(item);
+          });
+        }
+      } catch (error) {
+        console.error('Error loading appointments history:', error);
+      }
+
+      // Load documents history
+      try {
+        const q = query(
+          collection(db, 'documentRequests'),
+          where('userId', '==', uid),
+          orderBy('createdAt', 'desc')
+        );
+        const snapshot = await getDocs(q);
+        
+        const documentsHistoryList = document.getElementById('documentsHistoryList');
+        
+        if (snapshot.empty) {
+          documentsHistoryList.innerHTML = `
+            <div class="empty-state">
+              <div class="empty-state-icon">📄</div>
+              <p>No document request history.</p>
+            </div>
+          `;
+        } else {
+          documentsHistoryList.innerHTML = '';
+          snapshot.forEach(doc => {
+            const data = doc.data();
+            const item = document.createElement('div');
+            item.className = 'appointment-item';
+            item.innerHTML = `
+              <div class="appointment-header">
+                <div class="appointment-title">${data.documentType}</div>
+                <span class="status-badge status-${data.status}">${data.status.toUpperCase()}</span>
+              </div>
+              <div class="appointment-details">
+                Purpose: ${data.purpose}<br>
+                🕐 Requested: ${formatDate(data.createdAt)}
+                ${data.notes ? `<br>📝 ${data.notes}` : ''}
+                ${data.deliveryMethod ? `<br>📦 Delivery: ${data.deliveryMethod}` : ''}
+                ${data.documentLink ? `<br><a href="${data.documentLink}" target="_blank" style="color: #0a73ff;">Download Document</a>` : ''}
+                ${data.adminNotes ? `<br>💬 Admin: ${data.adminNotes}` : ''}
+              </div>
+            `;
+            documentsHistoryList.appendChild(item);
+          });
+        }
+      } catch (error) {
+        console.error('Error loading documents history:', error);
+      }
+    }
+
+    // Navigation
+    document.querySelectorAll('.nav-item').forEach(item => {
+      item.addEventListener('click', () => {
+        document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+        item.classList.add('active');
+        
+        const page = item.dataset.page;
+        document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
+        document.getElementById(`${page}Section`).classList.add('active');
+        
+        const titles = {
+          home: 'Home',
+          appointments: 'Appointments',
+          documents: 'Documents',
+          history: 'History'
+        };
+        document.getElementById('pageTitle').textContent = titles[page];
+      });
+    });
+
+    // History tabs
+    document.querySelectorAll('.history-tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('.history-tab').forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        
+        const historyType = tab.dataset.history;
+        document.querySelectorAll('.history-content').forEach(c => c.classList.remove('active'));
+        document.getElementById(`${historyType}History`).classList.add('active');
+      });
+    });
+
+    // Notification bell click
+    document.getElementById('notificationBell').addEventListener('click', (e) => {
+      e.stopPropagation();
+      const dropdown = document.getElementById('notificationDropdown');
+      dropdown.classList.toggle('active');
+      document.getElementById('profileDropdown').classList.remove('active');
+    });
+
+    // Profile section click
+    document.getElementById('profileSection').addEventListener('click', (e) => {
+      e.stopPropagation();
+      const dropdown = document.getElementById('profileDropdown');
+      dropdown.classList.toggle('active');
+      document.getElementById('notificationDropdown').classList.remove('active');
+    });
+
+    // Close dropdowns when clicking outside
+    document.addEventListener('click', () => {
+      document.getElementById('notificationDropdown').classList.remove('active');
+      document.getElementById('profileDropdown').classList.remove('active');
+    });
+
+    // View profile button
+    document.getElementById('viewProfile').addEventListener('click', () => {
+      window.location.href = 'profile.html';
+    });
+
+    // Logout button
+    document.getElementById('logoutBtn').addEventListener('click', async () => {
+      if (confirm('Are you sure you want to log out?')) {
+        try {
+          if (notificationUnsubscribe) {
+            notificationUnsubscribe();
+          }
+          await signOut(auth);
+          sessionStorage.removeItem('faceLoginUser');
+          window.location.href = 'login.html';
+        } catch (error) {
+          console.error('Error signing out:', error);
+        }
+      }
+    });
+
+    // Appointment Modal
+    const appointmentModal = document.getElementById('appointmentModal');
+    document.getElementById('newAppointmentBtn').addEventListener('click', () => {
+      appointmentModal.classList.add('active');
+    });
+    document.getElementById('closeAppointmentModal').addEventListener('click', () => {
+      appointmentModal.classList.remove('active');
+    });
+
+    // Document Modal
+    const documentModal = document.getElementById('documentModal');
+    document.getElementById('requestDocumentBtn').addEventListener('click', () => {
+      documentModal.classList.add('active');
+    });
+    document.getElementById('closeDocumentModal').addEventListener('click', () => {
+      documentModal.classList.remove('active');
+    });
+
+    // Submit Appointment
+    document.getElementById('appointmentForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      try {
+        await addDoc(collection(db, 'appointments'), {
+          userId: currentUser.uid,
+          purpose: document.getElementById('appointmentPurpose').value,
+          date: document.getElementById('appointmentDate').value,
+          time: document.getElementById('appointmentTime').value,
+          notes: document.getElementById('appointmentNotes').value,
+          status: 'pending',
+          createdAt: new Date().toISOString()
+        });
+
+        await addDoc(collection(db, 'notifications'), {
+          userId: currentUser.uid,
+          title: 'Appointment Request Submitted',
+          message: 'Your appointment request has been submitted and is pending approval.',
+          read: false,
+          createdAt: new Date().toISOString()
+        });
+        
+        alert('Appointment request submitted successfully!');
+        appointmentModal.classList.remove('active');
+        document.getElementById('appointmentForm').reset();
+        await loadAppointments(currentUser.uid);
+        await loadHistory(currentUser.uid);
+      } catch (error) {
+        console.error('Error submitting appointment:', error);
+        alert('Error submitting appointment. Please try again.');
+      }
+    });
+
+    // Submit Document Request
+    document.getElementById('documentForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      try {
+        await addDoc(collection(db, 'documentRequests'), {
+          userId: currentUser.uid,
+          documentType: document.getElementById('documentType').value,
+          purpose: document.getElementById('documentPurpose').value,
+          notes: document.getElementById('documentNotes').value,
+          status: 'pending',
+          createdAt: new Date().toISOString()
+        });
+
+        await addDoc(collection(db, 'notifications'), {
+          userId: currentUser.uid,
+          title: 'Document Request Submitted',
+          message: 'Your document request has been submitted and is being processed.',
+          read: false,
+          createdAt: new Date().toISOString()
+        });
+        
+        alert('Document request submitted successfully!');
+        documentModal.classList.remove('active');
+        document.getElementById('documentForm').reset();
+        await loadDocumentRequests(currentUser.uid);
+        await loadHistory(currentUser.uid);
+      } catch (error) {
+        console.error('Error submitting document request:', error);
+        alert('Error submitting document request. Please try again.');
+      }
+    });
+  </script>
+
+</body>
+</html>

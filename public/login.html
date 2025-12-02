@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Log In — AFP OVAI</title>
+
+  <style>
+    /* Global Page Style */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #0a3dff, #ffffff);
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      color: #ffffff;
+    }
+
+    /* Back Button */
+    .back-button {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      background: rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      color: #ffffff;
+      padding: 10px 20px;
+      border-radius: 25px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 600;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.3s ease;
+      z-index: 100;
+    }
+
+    .back-button:hover {
+      background: rgba(255, 255, 255, 0.3);
+      transform: translateX(-5px);
+    }
+
+    /* Header */
+    header {
+      text-align: center;
+      padding: 60px 20px 30px 20px;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 32px;
+      font-weight: 700;
+      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+      letter-spacing: 0.5px;
+    }
+
+    /* Main Content */
+    main {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .auth-container {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(20px);
+      padding: 40px;
+      width: 100%;
+      max-width: 440px;
+      border-radius: 20px;
+      text-align: center;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.5);
+    }
+
+    .auth-container h2 {
+      margin-bottom: 10px;
+      color: #2d3748;
+      font-size: 28px;
+      font-weight: 700;
+    }
+
+    .sub-text {
+      color: #718096;
+      margin-bottom: 30px;
+      font-size: 14px;
+    }
+
+    /* Form Elements */
+    .label-title {
+      display: block;
+      text-align: left;
+      margin-top: 12px;
+      margin-bottom: 4px;
+      font-size: 13px;
+      color: #2d3748;
+      font-weight: 600;
+    }
+
+    input {
+      width: 100%;
+      padding: 14px;
+      border: 2px solid #e2e8f0;
+      border-radius: 10px;
+      font-size: 15px;
+      background: #f7fafc;
+      color: #2d3748;
+      margin-bottom: 16px;
+      transition: all 0.3s ease;
+    }
+
+    input:focus {
+      outline: none;
+      border-color: #667eea;
+      background: #ffffff;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+
+    input::placeholder {
+      color: #a0aec0;
+    }
+
+    .password-wrapper {
+      position: relative;
+      width: 100%;
+      margin-bottom: 16px;
+    }
+
+    .password-wrapper input {
+      width: 100%;
+      padding-right: 45px;
+      margin-bottom: 0;
+    }
+
+    .toggle-password {
+      position: absolute;
+      top: 50%;
+      right: 14px;
+      transform: translateY(-50%);
+      cursor: pointer;
+      color: #718096;
+      font-size: 18px;
+      user-select: none;
+      transition: 0.2s;
+      width: 24px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .toggle-password:hover {
+      color: #2d3748;
+    }
+
+    .toggle-password svg {
+      width: 20px;
+      height: 20px;
+    }
+
+    .forgot-password {
+      text-align: right;
+      margin-bottom: 20px;
+    }
+
+    .forgot-password a {
+      color: #667eea;
+      font-size: 13px;
+      text-decoration: none;
+      transition: 0.2s;
+      font-weight: 600;
+    }
+
+    .forgot-password a:hover {
+      color: #764ba2;
+    }
+
+    hr {
+      margin: 25px 0;
+      border: none;
+      border-top: 2px solid #e2e8f0;
+    }
+
+    /* Camera Section */
+    .camera-section {
+      margin: 20px 0;
+      text-align: center;
+    }
+
+    #faceStatus {
+      font-size: 14px;
+      color: #2d3748;
+      margin-bottom: 12px;
+      font-weight: 600;
+    }
+
+    #video {
+      width: 100%;
+      max-width: 100%;
+      height: 240px;
+      background: #000;
+      border-radius: 12px;
+      border: 3px solid #e2e8f0;
+      display: block;
+      margin: 12px 0;
+      object-fit: cover;
+    }
+
+    .camera-controls {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    /* Buttons */
+    .btn {
+      width: 100%;
+      padding: 14px;
+      border: none;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: #fff;
+      font-size: 16px;
+      border-radius: 10px;
+      cursor: pointer;
+      margin-top: 10px;
+      font-weight: 700;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+    }
+
+    .btn:disabled {
+      background: #cbd5e0;
+      cursor: not-allowed;
+      opacity: 0.6;
+      transform: none;
+      box-shadow: none;
+    }
+
+    /* Outline Button */
+    .btn-outline {
+      background: transparent;
+      border: 2px solid #667eea;
+      color: #667eea;
+      width: auto;
+      padding: 10px 20px;
+      margin-top: 0;
+      box-shadow: none;
+    }
+
+    .btn-outline:hover:not(:disabled) {
+      background: rgba(102, 126, 234, 0.1);
+      transform: translateY(-2px);
+    }
+
+    .btn-outline:disabled {
+      border-color: #cbd5e0;
+      color: #cbd5e0;
+    }
+
+    .signup-link {
+      margin-top: 20px;
+      font-size: 14px;
+      color: #718096;
+    }
+
+    .signup-link a {
+      color: #667eea;
+      font-weight: 700;
+      text-decoration: none;
+      transition: 0.2s ease;
+    }
+
+    .signup-link a:hover {
+      color: #764ba2;
+    }
+
+    .or-divider {
+      display: flex;
+      align-items: center;
+      margin: 25px 0;
+      color: #718096;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .or-divider::before,
+    .or-divider::after {
+      content: '';
+      flex: 1;
+      border-bottom: 2px solid #e2e8f0;
+    }
+
+    .or-divider span {
+      padding: 0 15px;
+    }
+
+    /* Footer */
+    footer {
+      text-align: center;
+      padding: 20px 10px;
+      font-size: 14px;
+      color: rgba(0, 0, 0, 0.9);
+      text-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .back-button {
+        top: 15px;
+        left: 15px;
+        padding: 8px 16px;
+        font-size: 13px;
+      }
+
+      header h1 {
+        font-size: 26px;
+      }
+
+      .auth-container {
+        padding: 30px 25px;
+      }
+
+      .auth-container h2 {
+        font-size: 24px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <a href="index.html" class="back-button">
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M10 12L6 8L10 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    Back to Home
+  </a>
+
+  <header>
+    <h1>Armed Forces of the Philippines<br>Office Village Association, Inc.</h1>
+  </header>
+
+  <main>
+    <div class="auth-container">
+      <h2>Welcome Back</h2>
+      <p class="sub-text">Enter your credentials to access your account</p>
+
+      <form id="loginForm" autocomplete="off">
+        <input type="email" id="email" placeholder="Email address" required />
+        
+        <div class="password-wrapper">
+          <input type="password" id="password" placeholder="Password" required />
+          <span class="toggle-password" data-target="password">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
+            </svg>
+          </span>
+        </div>
+
+        <div class="forgot-password">
+          <a href="#">Forgot password?</a>
+        </div>
+
+        <button type="submit" id="loginBtn" class="btn">Log In</button>
+
+        <div class="or-divider">
+          <span>OR</span>
+        </div>
+
+        <div class="camera-section">
+          <p id="faceStatus">Loading face detection models...</p>
+
+          <video id="video" autoplay muted playsinline></video>
+
+          <div class="camera-controls">
+            <button type="button" id="startCameraBtn" class="btn-outline" disabled>Enable Camera</button>
+            <button type="button" id="loginWithFaceBtn" class="btn-outline" disabled>Log In with Face</button>
+          </div>
+        </div>
+
+        <p class="signup-link">Don't have an account? <a href="signup.html">Sign Up</a></p>
+      </form>
+    </div>
+  </main>
+
+  <footer>
+    &copy; 2025 AFPOVAI. All rights reserved. <br> For school purposes only.
+  </footer>
+
+  <!-- face-api.js -->
+  <script src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
+
+  <!-- Firebase + App logic (module) -->
+  <script type="module">
+    function waitForFaceAPI() {
+      return new Promise((resolve) => {
+        if (typeof faceapi !== 'undefined') {
+          resolve();
+        } else {
+          const checkInterval = setInterval(() => {
+            if (typeof faceapi !== 'undefined') {
+              clearInterval(checkInterval);
+              resolve();
+            }
+          }, 100);
+        }
+      });
+    }
+
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+    import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+    import { getFirestore, collection, getDocs, doc, getDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCw2Gf-FyZF9sBU450znJ1cyjjKWUkqTyY",
+      authDomain: "afpovaiweb-8a7c9.firebaseapp.com",
+      projectId: "afpovaiweb-8a7c9",
+      storageBucket: "afpovaiweb-8a7c9.firebasestorage.app",
+      messagingSenderId: "120025740192",
+      appId: "1:120025740192:web:9f62d7395959642009eac5"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    const video = document.getElementById('video');
+    const startCameraBtn = document.getElementById('startCameraBtn');
+    const loginWithFaceBtn = document.getElementById('loginWithFaceBtn');
+    const faceStatus = document.getElementById('faceStatus');
+    const loginForm = document.getElementById('loginForm');
+
+    // Function to redirect based on user role
+    async function redirectBasedOnRole(userId) {
+      try {
+        const userDoc = await getDoc(doc(db, 'users', userId));
+        if (userDoc.exists()) {
+          const userData = userDoc.data();
+          const role = userData.role || 'resident';
+          
+          if (role === 'admin') {
+            window.location.href = 'admin-dashboard.html';
+          } else {
+            window.location.href = 'resident-dashboard.html';
+          }
+        } else {
+          window.location.href = 'resident-dashboard.html';
+        }
+      } catch (error) {
+        console.error('Error checking user role:', error);
+        window.location.href = 'resident-dashboard.html';
+      }
+    }
+
+    document.querySelectorAll('.toggle-password').forEach(toggle => {
+      toggle.addEventListener('click', function() {
+        const targetId = this.getAttribute('data-target');
+        const passwordInput = document.getElementById(targetId);
+        
+        if (passwordInput.type === 'password') {
+          passwordInput.type = 'text';
+          this.innerHTML = `
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+            </svg>
+          `;
+        } else {
+          passwordInput.type = 'password';
+          this.innerHTML = `
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
+            </svg>
+          `;
+        }
+      });
+    });
+
+    async function loadFaceModels() {
+      await waitForFaceAPI();
+      const MODEL_URL = "https://cdn.jsdelivr.net/gh/justadudewhohacks/face-api.js@master/weights";
+
+      try {
+        faceStatus.textContent = "Loading face detection models...";
+        await faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL);
+        await faceapi.nets.faceLandmark68TinyNet.loadFromUri(MODEL_URL);
+        await faceapi.nets.faceRecognitionNet.loadFromUri(MODEL_URL);
+        console.log("Models loaded successfully");
+        faceStatus.textContent = "Models loaded — enable camera for face login";
+        startCameraBtn.disabled = false;
+      } catch (err) {
+        console.error("Model load failed:", err);
+        faceStatus.textContent = "Model load failed. Use email/password login.";
+      }
+    }
+
+    loadFaceModels();
+
+    startCameraBtn.addEventListener('click', async () => {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
+        video.srcObject = stream;
+        loginWithFaceBtn.disabled = false;
+        startCameraBtn.disabled = true;
+        faceStatus.textContent = 'Camera ready — position your face and click to log in';
+      } catch (err) {
+        console.error('Camera error', err);
+        alert('Cannot access camera: ' + (err.message || err));
+      }
+    });
+
+    loginWithFaceBtn.addEventListener('click', async () => {
+      faceStatus.textContent = 'Detecting face...';
+      
+      try {
+        const detection = await faceapi
+          .detectSingleFace(video, new faceapi.TinyFaceDetectorOptions())
+          .withFaceLandmarks(true)
+          .withFaceDescriptor();
+
+        if (!detection) {
+          faceStatus.textContent = 'No face detected — try again';
+          return;
+        }
+
+        const currentDescriptor = detection.descriptor;
+        faceStatus.textContent = 'Matching face...';
+
+        // CHANGED: Read from faceAuth collection instead of users
+        const faceAuthSnapshot = await getDocs(collection(db, 'faceAuth'));
+        
+        let matchedUserId = null;
+        let bestMatch = 1.0;
+
+        faceAuthSnapshot.forEach((docSnap) => {
+          const faceData = docSnap.data();
+          if (faceData.faceDescriptor) {
+            const storedDescriptor = new Float32Array(faceData.faceDescriptor);
+            const distance = faceapi.euclideanDistance(currentDescriptor, storedDescriptor);
+            
+            console.log(`Distance for user ${docSnap.id}: ${distance}`);
+            
+            if (distance < 0.6 && distance < bestMatch) {
+              bestMatch = distance;
+              matchedUserId = docSnap.id; // The document ID is the userId
+            }
+          }
+        });
+
+        if (matchedUserId) {
+          faceStatus.textContent = 'Face recognized! Logging in...';
+          
+          // Get user details from users collection
+          const userDoc = await getDoc(doc(db, 'users', matchedUserId));
+          
+          if (userDoc.exists()) {
+            const userData = userDoc.data();
+            
+            sessionStorage.setItem('faceLoginUser', JSON.stringify({
+              uid: matchedUserId,
+              email: userData.email,
+              firstName: userData.firstName,
+              lastName: userData.lastName,
+              role: userData.role || 'resident',
+              loginMethod: 'face'
+            }));
+            
+            faceStatus.textContent = 'Login successful!';
+            alert(`Welcome back, ${userData.firstName}!`);
+            
+            // Redirect based on role
+            await redirectBasedOnRole(matchedUserId);
+          } else {
+            faceStatus.textContent = 'User data not found';
+            alert('Error: User data not found. Please contact support.');
+          }
+        } else {
+          faceStatus.textContent = 'Face not recognized — try email/password login';
+          alert('Face not recognized. Please use email and password to log in.');
+        }
+
+      } catch (err) {
+        console.error('Face login error', err);
+        faceStatus.textContent = 'Error during face recognition';
+        alert('Error: ' + (err.message || err));
+      }
+    });
+
+    loginForm.addEventListener('submit', async (ev) => {
+      ev.preventDefault();
+
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value;
+
+      if (!email || !password) {
+        return alert('Please enter both email and password.');
+      }
+
+      try {
+        faceStatus.textContent = 'Logging in...';
+        const userCredential = await signInWithEmailAndPassword(auth, email, password);
+        const user = userCredential.user;
+        
+        faceStatus.textContent = 'Login successful!';
+        alert('Login successful! Redirecting to dashboard...');
+        
+        // Redirect based on role
+        await redirectBasedOnRole(user.uid);
+      } catch (err) {
+        console.error('Login error', err);
+        
+        let errorMessage = 'Login error: ';
+        
+        if (err.code === 'auth/user-not-found') {
+          errorMessage = 'No account found with this email. Please sign up first.';
+        } else if (err.code === 'auth/wrong-password') {
+          errorMessage = 'Incorrect password. Please try again.';
+        } else if (err.code === 'auth/invalid-email') {
+          errorMessage = 'Invalid email address. Please check and try again.';
+        } else if (err.code === 'auth/too-many-requests') {
+          errorMessage = 'Too many failed login attempts. Please try again later.';
+        } else if (err.code === 'auth/network-request-failed') {
+          errorMessage = 'Network error. Please check your internet connection.';
+        } else {
+          errorMessage += err.message || err;
+        }
+        
+        faceStatus.textContent = 'Login failed';
+        alert(errorMessage);
+      }
+    });
+
+    window.addEventListener('beforeunload', () => {
+      if (video && video.srcObject) {
+        video.srcObject.getTracks().forEach(t => t.stop());
+      }
+    });
+  </script>
+
+</body>
+</html>
