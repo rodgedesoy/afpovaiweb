@@ -513,6 +513,110 @@
       width: auto;
       margin: 0;
     }
+
+    /* Announcement Item */
+    .announcement-admin-item {
+      background: #f8f9fa;
+      padding: 20px;
+      border-radius: 8px;
+      border-left: 4px solid #667eea;
+      margin-bottom: 16px;
+    }
+
+    .announcement-admin-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .announcement-admin-title {
+      font-size: 18px;
+      font-weight: bold;
+      color: #1b1b1b;
+    }
+
+    .announcement-admin-content {
+      font-size: 14px;
+      color: #666;
+      line-height: 1.6;
+      margin-bottom: 12px;
+    }
+
+    .announcement-admin-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+      color: #999;
+    }
+
+    .announcement-delete-btn {
+      background: #dc3545;
+      color: white;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 12px;
+      transition: 0.2s;
+    }
+
+    .announcement-delete-btn:hover {
+      background: #c82333;
+    }
+
+    /* Event Item */
+    .event-admin-item {
+      background: #f8f9fa;
+      padding: 20px;
+      border-radius: 8px;
+      border-left: 4px solid #28a745;
+      margin-bottom: 16px;
+    }
+
+    .event-admin-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .event-admin-title {
+      font-size: 18px;
+      font-weight: bold;
+      color: #1b1b1b;
+    }
+
+    .event-admin-details {
+      font-size: 14px;
+      color: #666;
+      line-height: 1.8;
+      margin-bottom: 12px;
+    }
+
+    .event-admin-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+      color: #999;
+    }
+
+    .event-delete-btn {
+      background: #dc3545;
+      color: white;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 12px;
+      transition: 0.2s;
+    }
+
+    .event-delete-btn:hover {
+      background: #c82333;
+    }
   </style>
 </head>
 <body>
@@ -539,6 +643,14 @@
       <div class="nav-item" data-page="residents">
         <span class="nav-icon">👥</span>
         <span>Manage Residents</span>
+      </div>
+      <div class="nav-item" data-page="announcements">
+        <span class="nav-icon">📢</span>
+        <span>Announcements</span>
+      </div>
+      <div class="nav-item" data-page="events">
+        <span class="nav-icon">🎉</span>
+        <span>Events</span>
       </div>
     </nav>
   </div>
@@ -696,6 +808,92 @@
           </div>
         </div>
       </div>
+
+      <!-- Announcements Section -->
+      <div class="page-section" id="announcementsSection">
+        <div class="card">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <h3>Manage Announcements</h3>
+            <button class="btn" id="newAnnouncementBtn">+ Post Announcement</button>
+          </div>
+          <div id="announcementsList">
+            <div class="empty-state">
+              <div class="empty-state-icon">📢</div>
+              <p>No announcements posted yet.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Events Section -->
+      <div class="page-section" id="eventsSection">
+        <div class="card">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <h3>Manage Events</h3>
+            <button class="btn" id="newEventBtn">+ Create Event</button>
+          </div>
+          <div id="eventsList">
+            <div class="empty-state">
+              <div class="empty-state-icon">🎉</div>
+              <p>No events scheduled yet.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Create Event Modal -->
+  <div class="modal" id="eventModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Create New Event</h3>
+        <button class="close-btn" id="closeEventModal">×</button>
+      </div>
+      <form id="eventForm">
+        <div class="form-group">
+          <label>Event Title</label>
+          <input type="text" id="eventTitle" placeholder="e.g., Community Sports Day" required />
+        </div>
+        <div class="form-group">
+          <label>Event Date</label>
+          <input type="date" id="eventDate" required />
+        </div>
+        <div class="form-group">
+          <label>Event Time</label>
+          <input type="time" id="eventTime" required />
+        </div>
+        <div class="form-group">
+          <label>Location</label>
+          <input type="text" id="eventLocation" placeholder="e.g., Community Center" required />
+        </div>
+        <div class="form-group">
+          <label>Description</label>
+          <textarea id="eventDescription" placeholder="Describe the event..." required style="min-height: 120px;"></textarea>
+        </div>
+        <button type="submit" class="btn" style="width: 100%;">Create Event</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Create Announcement Modal -->
+  <div class="modal" id="announcementModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Post New Announcement</h3>
+        <button class="close-btn" id="closeAnnouncementModal">×</button>
+      </div>
+      <form id="announcementForm">
+        <div class="form-group">
+          <label>Title</label>
+          <input type="text" id="announcementTitle" placeholder="e.g., Community Meeting" required />
+        </div>
+        <div class="form-group">
+          <label>Content</label>
+          <textarea id="announcementContent" placeholder="Write your announcement here..." required style="min-height: 150px;"></textarea>
+        </div>
+        <button type="submit" class="btn" style="width: 100%;">Post Announcement</button>
+      </form>
     </div>
   </div>
 
@@ -837,7 +1035,7 @@
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
     import { getAuth, createUserWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
-    import { getFirestore, doc, getDoc, setDoc, collection, addDoc, query, where, getDocs, orderBy, updateDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+    import { getFirestore, doc, getDoc, setDoc, collection, addDoc, query, where, getDocs, orderBy, updateDoc, onSnapshot, deleteDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyCw2Gf-FyZF9sBU450znJ1cyjjKWUkqTyY",
@@ -922,6 +1120,8 @@
       await loadAppointments();
       await loadDocumentRequests();
       await loadResidents();
+      await loadAnnouncements();
+      await loadEvents();
     }
 
     // Load appointments
@@ -1156,6 +1356,136 @@
       }
     }
 
+    // Load announcements
+    async function loadAnnouncements() {
+      try {
+        const q = query(collection(db, 'announcements'), orderBy('createdAt', 'desc'));
+        const snapshot = await getDocs(q);
+        
+        const announcementsList = document.getElementById('announcementsList');
+        
+        if (snapshot.empty) {
+          announcementsList.innerHTML = `
+            <div class="empty-state">
+              <div class="empty-state-icon">📢</div>
+              <p>No announcements posted yet.</p>
+            </div>
+          `;
+          return;
+        }
+
+        announcementsList.innerHTML = '';
+        
+        snapshot.forEach(doc => {
+          const data = doc.data();
+          const item = document.createElement('div');
+          item.className = 'announcement-admin-item';
+          item.innerHTML = `
+            <div class="announcement-admin-header">
+              <div class="announcement-admin-title">${data.title}</div>
+              <button class="announcement-delete-btn" data-id="${doc.id}">Delete</button>
+            </div>
+            <div class="announcement-admin-content">${data.content}</div>
+            <div class="announcement-admin-footer">
+              <span>📅 Posted: ${formatDate(data.createdAt)}</span>
+            </div>
+          `;
+          announcementsList.appendChild(item);
+        });
+
+        // Add delete event listeners
+        document.querySelectorAll('.announcement-delete-btn').forEach(btn => {
+          btn.addEventListener('click', async (e) => {
+            const id = e.target.dataset.id;
+            await deleteAnnouncement(id);
+          });
+        });
+      } catch (error) {
+        console.error('Error loading announcements:', error);
+      }
+    }
+
+    // Delete announcement
+    async function deleteAnnouncement(id) {
+      if (!confirm('Are you sure you want to delete this announcement?')) return;
+      
+      try {
+        await deleteDoc(doc(db, 'announcements', id));
+        alert('Announcement deleted successfully!');
+        await loadAnnouncements();
+      } catch (error) {
+        console.error('Error deleting announcement:', error);
+        alert('Error deleting announcement. Please try again.');
+      }
+    }
+
+    // Load events
+    async function loadEvents() {
+      try {
+        const q = query(collection(db, 'events'), orderBy('eventDate', 'asc'));
+        const snapshot = await getDocs(q);
+        
+        const eventsList = document.getElementById('eventsList');
+        
+        if (snapshot.empty) {
+          eventsList.innerHTML = `
+            <div class="empty-state">
+              <div class="empty-state-icon">🎉</div>
+              <p>No events scheduled yet.</p>
+            </div>
+          `;
+          return;
+        }
+
+        eventsList.innerHTML = '';
+        
+        snapshot.forEach(doc => {
+          const data = doc.data();
+          const item = document.createElement('div');
+          item.className = 'event-admin-item';
+          item.innerHTML = `
+            <div class="event-admin-header">
+              <div class="event-admin-title">${data.title}</div>
+              <button class="event-delete-btn" data-id="${doc.id}">Delete</button>
+            </div>
+            <div class="event-admin-details">
+              📅 ${formatDate(data.eventDate)} at ${data.eventTime}<br>
+              📍 ${data.location}<br>
+              📝 ${data.description}
+            </div>
+            <div class="event-admin-footer">
+              <span>Created: ${formatDate(data.createdAt)}</span>
+            </div>
+          `;
+          eventsList.appendChild(item);
+        });
+
+        // Add delete event listeners
+        document.querySelectorAll('.event-delete-btn').forEach(btn => {
+          btn.addEventListener('click', async (e) => {
+            const id = e.target.dataset.id;
+            await deleteEvent(id);
+          });
+        });
+      } catch (error) {
+        console.error('Error loading events:', error);
+      }
+    }
+
+    // Delete event
+    async function deleteEvent(id) {
+      if (!confirm('Are you sure you want to delete this event?')) return;
+      
+      try {
+        await deleteDoc(doc(db, 'events', id));
+        alert('Event deleted successfully!');
+        await loadEvents();
+      } catch (error) {
+        console.error('Error deleting event:', error);
+        alert('Error deleting event. Please try again.');
+      }
+    }
+
     // Format date
     function formatDate(dateString) {
       if (!dateString) return 'N/A';
@@ -1174,10 +1504,12 @@
         document.getElementById(`${page}Section`).classList.add('active');
         
         const titles = {
-          home: 'Home',
+          home: 'Dashboard',
           appointments: 'Appointments',
           documents: 'Document Requests',
-          residents: 'Manage Residents'
+          residents: 'Manage Residents',
+          announcements: 'Announcements',
+          events: 'Events'
         };
         document.getElementById('pageTitle').textContent = titles[page];
       });
@@ -1197,7 +1529,7 @@
 
     // View profile button
     document.getElementById('viewProfile').addEventListener('click', () => {
-      window.location.href = 'profile.html';
+      alert('Profile page coming soon!');
     });
 
     // Logout button
@@ -1248,6 +1580,24 @@
 
     document.getElementById('addResidentBtn').addEventListener('click', () => {
       document.getElementById('registerResidentModal').classList.add('active');
+    });
+
+    // Announcement modal controls
+    document.getElementById('newAnnouncementBtn').addEventListener('click', () => {
+      document.getElementById('announcementModal').classList.add('active');
+    });
+
+    document.getElementById('closeAnnouncementModal').addEventListener('click', () => {
+      document.getElementById('announcementModal').classList.remove('active');
+    });
+
+    // Event modal controls
+    document.getElementById('newEventBtn').addEventListener('click', () => {
+      document.getElementById('eventModal').classList.add('active');
+    });
+
+    document.getElementById('closeEventModal').addEventListener('click', () => {
+      document.getElementById('eventModal').classList.remove('active');
     });
 
     // Toggle digital link field
@@ -1344,6 +1694,60 @@
       }
     });
 
+    // Submit event form
+    document.getElementById('eventForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      try {
+        const title = document.getElementById('eventTitle').value;
+        const eventDate = document.getElementById('eventDate').value;
+        const eventTime = document.getElementById('eventTime').value;
+        const location = document.getElementById('eventLocation').value;
+        const description = document.getElementById('eventDescription').value;
+
+        await addDoc(collection(db, 'events'), {
+          title: title,
+          eventDate: eventDate,
+          eventTime: eventTime,
+          location: location,
+          description: description,
+          createdAt: new Date().toISOString()
+        });
+
+        alert('Event created successfully!');
+        document.getElementById('eventModal').classList.remove('active');
+        document.getElementById('eventForm').reset();
+        await loadEvents();
+      } catch (error) {
+        console.error('Error creating event:', error);
+        alert('Error creating event. Please try again.');
+      }
+    });
+
+    // Submit announcement form
+    document.getElementById('announcementForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      try {
+        const title = document.getElementById('announcementTitle').value;
+        const content = document.getElementById('announcementContent').value;
+
+        await addDoc(collection(db, 'announcements'), {
+          title: title,
+          content: content,
+          createdAt: new Date().toISOString()
+        });
+
+        alert('Announcement posted successfully!');
+        document.getElementById('announcementModal').classList.remove('active');
+        document.getElementById('announcementForm').reset();
+        await loadAnnouncements();
+      } catch (error) {
+        console.error('Error posting announcement:', error);
+        alert('Error posting announcement. Please try again.');
+      }
+    });
+
     // Submit register resident form
     document.getElementById('registerResidentForm').addEventListener('submit', async (e) => {
       e.preventDefault();
@@ -1374,7 +1778,7 @@
         // Send welcome notification
         await addDoc(collection(db, 'notifications'), {
           userId: user.uid,
-          title: 'Welcome to AFPOVAI!',
+          title: 'Welcome to AFP OVAI!',
           message: 'Your account has been created successfully. You can now access all resident services.',
           read: false,
           createdAt: new Date().toISOString()
